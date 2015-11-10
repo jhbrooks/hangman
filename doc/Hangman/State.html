@@ -203,7 +203,7 @@
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File hangman.rb, line 207</span>
+            <pre><span class="ruby-comment"># File hangman.rb, line 209</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>
   <span class="ruby-ivar">@target_word</span> = <span class="ruby-string">&quot;&quot;</span>
   <span class="ruby-ivar">@last_guess</span> = <span class="ruby-string">&quot;&quot;</span>
@@ -249,7 +249,7 @@
 
           
           <div class="method-source-code" id="display-source">
-            <pre><span class="ruby-comment"># File hangman.rb, line 239</span>
+            <pre><span class="ruby-comment"># File hangman.rb, line 241</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">display</span>(<span class="ruby-identifier">line_width</span>)
   <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Results: #{match_string}&quot;</span>.<span class="ruby-identifier">center</span>(<span class="ruby-identifier">line_width</span>)
   <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Guesses left: #{guesses_left}&quot;</span>.<span class="ruby-identifier">center</span>(<span class="ruby-identifier">line_width</span>)
@@ -285,7 +285,7 @@
 
           
           <div class="method-source-code" id="guess_update_guesses_left-source">
-            <pre><span class="ruby-comment"># File hangman.rb, line 235</span>
+            <pre><span class="ruby-comment"># File hangman.rb, line 237</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">guess_update_guesses_left</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">guesses_left</span> <span class="ruby-operator">-=</span> <span class="ruby-value">1</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">target_word</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">last_guess</span>
 <span class="ruby-keyword">end</span></pre>
@@ -318,7 +318,7 @@
 
           
           <div class="method-source-code" id="guess_update_match_string-source">
-            <pre><span class="ruby-comment"># File hangman.rb, line 227</span>
+            <pre><span class="ruby-comment"># File hangman.rb, line 229</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">guess_update_match_string</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">match_string</span> = <span class="ruby-identifier">last_guess</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">target_word</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">last_guess</span>
 <span class="ruby-keyword">end</span></pre>
@@ -351,7 +351,7 @@
 
           
           <div class="method-source-code" id="letter_update_guesses_left-source">
-            <pre><span class="ruby-comment"># File hangman.rb, line 231</span>
+            <pre><span class="ruby-comment"># File hangman.rb, line 233</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">letter_update_guesses_left</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">guesses_left</span> <span class="ruby-operator">-=</span> <span class="ruby-value">1</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">target_word</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">last_guess</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -384,7 +384,7 @@
 
           
           <div class="method-source-code" id="letter_update_match_string-source">
-            <pre><span class="ruby-comment"># File hangman.rb, line 216</span>
+            <pre><span class="ruby-comment"># File hangman.rb, line 218</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">letter_update_match_string</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">match_string</span> = <span class="ruby-string">&quot;&quot;</span>
   <span class="ruby-identifier">target_word</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&quot;&quot;</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">letter</span><span class="ruby-operator">|</span>
@@ -424,7 +424,7 @@
 
           
           <div class="method-source-code" id="lose-3F-source">
-            <pre><span class="ruby-comment"># File hangman.rb, line 255</span>
+            <pre><span class="ruby-comment"># File hangman.rb, line 257</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">lose?</span>
   <span class="ruby-identifier">guesses_left</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
 <span class="ruby-keyword">end</span></pre>
@@ -457,7 +457,7 @@
 
           
           <div class="method-source-code" id="quit-3F-source">
-            <pre><span class="ruby-comment"># File hangman.rb, line 247</span>
+            <pre><span class="ruby-comment"># File hangman.rb, line 249</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">quit?</span>
   <span class="ruby-identifier">quit_status</span>
 <span class="ruby-keyword">end</span></pre>
@@ -490,7 +490,7 @@
 
           
           <div class="method-source-code" id="win-3F-source">
-            <pre><span class="ruby-comment"># File hangman.rb, line 251</span>
+            <pre><span class="ruby-comment"># File hangman.rb, line 253</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">win?</span>
   <span class="ruby-identifier">target_word</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">match_string</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">target_word</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">last_guess</span>
 <span class="ruby-keyword">end</span></pre>
