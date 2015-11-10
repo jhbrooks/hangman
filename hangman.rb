@@ -11,13 +11,14 @@ class Game
     @min_length = 5
     @max_length = 12
     @line_width = 80
+    @commands = [:save, :load, :guess]
   end
 
   def start
     load_words
     winnow_words
     state.target_word = select_word
-    state.update_match_string
+    state.letter_update_match_string
     take_turn
   end
 
@@ -48,8 +49,9 @@ class Game
   end
 
   def take_turn
+    puts
     state.display(line_width)
-    ask_for_guess
+    ask_for_input
     if state.win?
       win
     elsif state.lose?
@@ -59,57 +61,98 @@ class Game
     end
   end
 
-  def ask_for_guess
-    puts "Please guess a letter."
-    state.last_guess = human_guess
-    state.letters_guessed << (state.last_guess)
-    state.update_match_string
-    state.update_guesses_left
-  end
-
-  def human_guess
-    guess = gets.downcase.chomp!
-    if guessed?(guess)
-      puts "You've already guessed that letter! Please try again."
-      human_guess
-    elsif !single_letter?(guess)
-      puts "That's not a letter! Please try again."
-      human_guess
+  def ask_for_input
+    puts "Valid commands: #{commands.join(', ')}"
+    puts "Please guess a letter, or enter a command."
+    input = gets.chomp!
+    if input.length == 1
+      human_letter(input)
     else
-      guess
+      human_command(input)
     end
   end
 
-  def guessed?(guess)
-    state.letters_guessed.include?(guess)
+  def human_letter(input)
+    if guessed?(input)
+      puts "You've already guessed that letter! Please try again.\n\n"
+      ask_for_input
+    elsif !letter?(input)
+      puts "That's not a letter! Please try again.\n\n"
+      ask_for_input
+    else
+      state.last_guess = input
+      state.letters_guessed << input
+      state.letter_update_match_string
+      state.letter_update_guesses_left
+    end
   end
 
-  def single_letter?(guess)
-    guess.ord.between?("a".ord, "z".ord) && guess.length == 1
+  def guessed?(input)
+    state.letters_guessed.include?(input)
+  end
+
+  def letter?(input)
+    input.ord.between?("a".ord, "z".ord)
+  end
+
+  def human_command(input)
+    if commands.include?(input.to_sym)
+      execute_command(input.to_sym)
+    else
+      puts "That's not a valid command! Please try again.\n\n"
+      ask_for_input
+    end
+  end
+
+  def execute_command(command)
+    case command
+    when :save then execute_save
+    when :load then execute_load
+    when :guess then execute_guess
+    end
+  end
+
+  def execute_save
+    puts "Save not yet implemented."
+  end
+
+  def execute_load
+    puts "Load not yet implemented."
+  end
+
+  def execute_guess
+    puts "Please guess a word."
+    state.last_guess = gets.downcase.chomp!
+    state.guess_update_match_string
+    state.guess_update_guesses_left
   end
 
   def win
     puts
     puts "*** Great guessing! You have won! ***".center(line_width)
+    puts
+    puts "Target word: #{state.target_word}".center(line_width)
     state.display(line_width)
   end
 
   def lose
     puts
     puts "*** You have lost! Better luck next time! ***".center(line_width)
+    puts
+    puts "Target word: #{state.target_word}".center(line_width)
     state.display(line_width)
   end
 
   private
 
-  attr_reader :dict_filename, :state, :min_length, :max_length, :line_width
+  attr_reader :dict_filename, :state, :min_length, :max_length,
+              :line_width, :commands
   attr_accessor :words, :target_word
 end
 
 # This class handles game state information
 class State
-  attr_writer :target_word
-  attr_accessor :last_guess, :letters_guessed
+  attr_accessor :target_word, :last_guess, :letters_guessed
 
   def initialize
     @target_word = ""
@@ -119,7 +162,7 @@ class State
     @guesses_left = 5
   end
 
-  def update_match_string
+  def letter_update_match_string
     self.match_string = ""
     target_word.split("").each do |letter|
       if letters_guessed.include?(letter)
@@ -130,12 +173,19 @@ class State
     end
   end
 
-  def update_guesses_left
+  def guess_update_match_string
+    self.match_string = last_guess if target_word == last_guess
+  end
+
+  def letter_update_guesses_left
     self.guesses_left -= 1 unless target_word.include?(last_guess)
   end
 
+  def guess_update_guesses_left
+    self.guesses_left -= 1 unless target_word == last_guess
+  end
+
   def display(line_width)
-    puts
     puts "Results: #{match_string}".center(line_width)
     puts "Guesses left: #{guesses_left}".center(line_width)
     puts
@@ -144,7 +194,7 @@ class State
   end
 
   def win?
-    target_word == match_string
+    target_word == match_string || target_word == last_guess
   end
 
   def lose?
@@ -153,7 +203,6 @@ class State
 
   private
 
-  attr_reader :target_word
   attr_accessor :match_string, :guesses_left
 end
 
