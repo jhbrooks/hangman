@@ -4,6 +4,8 @@
 module Hangman
   require "yaml"
 
+  SAVE_LOAD_PATH = File.dirname(__FILE__)
+
   # This class operates the game
   class Game
     def initialize
@@ -27,8 +29,8 @@ module Hangman
     end
 
     def load_words
-      if File.exist?(dict_filename)
-        dict_file = File.open(dict_filename, "r")
+      if File.exist?(File.join(SAVE_LOAD_PATH, dict_filename))
+        dict_file = File.open(File.join(SAVE_LOAD_PATH, dict_filename), "r")
         dict_file.each do |line|
           words << (line.strip)
         end
@@ -126,11 +128,11 @@ module Hangman
 
     def execute_save
       save_name = ask_for_filename
-      if File.exist?(save_name)
+      if File.exist?(File.join(SAVE_LOAD_PATH, save_name))
         puts "File #{save_name} already exists!"
       else
         yaml_string = YAML.dump(state)
-        File.open(save_name, "w") do |f|
+        File.open(File.join(SAVE_LOAD_PATH, save_name), "w") do |f|
           f.write(yaml_string)
         end
         puts "Game saved!"
@@ -139,11 +141,11 @@ module Hangman
 
     def execute_load
       load_name = ask_for_filename
-      if !File.exist?(load_name)
+      if !File.exist?(File.join(SAVE_LOAD_PATH, load_name))
         puts "File #{load_name} doesn't exist!"
       else
         yaml_string = ""
-        File.open(load_name, "r") do |f|
+        File.open(File.join(SAVE_LOAD_PATH, load_name), "r") do |f|
           yaml_string << f.read
         end
         self.state = YAML.load(yaml_string)
