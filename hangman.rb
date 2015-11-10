@@ -13,7 +13,7 @@ class Game
     @min_length = 5
     @max_length = 12
     @line_width = 80
-    @commands = [:save, :load, :guess]
+    @commands = [:save, :load, :guess, :quit]
   end
 
   def start
@@ -25,11 +25,16 @@ class Game
   end
 
   def load_words
-    dict_file = File.open(dict_filename, "r")
-    dict_file.each do |line|
-      words << (line.strip)
+    if File.exist?(dict_filename)
+      dict_file = File.open(dict_filename, "r")
+      dict_file.each do |line|
+        words << (line.strip)
+      end
+      dict_file.close
+    else
+      puts "Dictionary #{dict_filename} not found! Default target word used."
+      words << "bullseye"
     end
-    dict_file.close
   end
 
   def winnow_words
@@ -54,7 +59,9 @@ class Game
     puts
     state.display(line_width)
     ask_for_input
-    if state.win?
+    if state.quit?
+      quit
+    elsif state.win?
       win
     elsif state.lose?
       lose
@@ -111,24 +118,41 @@ class Game
     when :save then execute_save
     when :load then execute_load
     when :guess then execute_guess
+    when :quit then execute_quit
     end
   end
 
   def execute_save
-    puts "Game saved!"
-    yaml_string = YAML.dump(state)
-    File.open("save.yaml", "w") do |f|
-      f.write(yaml_string)
+    save_name = ask_for_filename
+    if File.exist?(save_name)
+      puts "File #{save_name} already exists!"
+    else
+      yaml_string = YAML.dump(state)
+      File.open(save_name, "w") do |f|
+        f.write(yaml_string)
+      end
+      puts "Game saved!"
     end
   end
 
   def execute_load
-    puts "Save loaded!"
-    yaml_string = ""
-    File.open("save.yaml", "r") do |f|
-      yaml_string << f.read
+    load_name = ask_for_filename
+    if !File.exist?(load_name)
+      puts "File #{load_name} doesn't exist!"
+    else
+      yaml_string = ""
+      File.open(load_name, "r") do |f|
+        yaml_string << f.read
+      end
+      self.state = YAML.load(yaml_string)
+      puts "Save loaded!"
     end
-    self.state = YAML.load(yaml_string)
+  end
+
+  def ask_for_filename
+    puts "Please enter a filename, without extension."
+    filename = gets.chomp!
+    filename << ".yaml"
   end
 
   def execute_guess
@@ -136,6 +160,18 @@ class Game
     state.last_guess = gets.downcase.chomp!
     state.guess_update_match_string
     state.guess_update_guesses_left
+  end
+
+  def execute_quit
+    puts "Are you sure you want to quit? Please answer yes or no."
+    answer = gets.downcase.chomp!
+    state.quit_status = true if answer == "y" || answer == "yes"
+  end
+
+  def quit
+    puts
+    puts "*** You have quit! See you again soon! ***".center(line_width)
+    puts
   end
 
   def win
@@ -163,12 +199,14 @@ end
 
 # This class handles game state information
 class State
+  attr_writer :quit_status
   attr_accessor :target_word, :last_guess, :letters_guessed
 
   def initialize
     @target_word = ""
     @last_guess = ""
     @letters_guessed = []
+    @quit_status = false
     @match_string = ""
     @guesses_left = 5
   end
@@ -204,6 +242,10 @@ class State
          "#{letters_guessed.join(', ')}" if letters_guessed.length > 0
   end
 
+  def quit?
+    quit_status
+  end
+
   def win?
     target_word == match_string || target_word == last_guess
   end
@@ -214,6 +256,7 @@ class State
 
   private
 
+  attr_reader :quit_status
   attr_accessor :match_string, :guesses_left
 end
 
