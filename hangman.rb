@@ -1,5 +1,7 @@
 #!/Users/jhbrooks/.rvm/rubies/ruby-2.2.0/bin/ruby
 
+require "yaml"
+
 # This class operates the game
 class Game
   def initialize
@@ -113,11 +115,20 @@ class Game
   end
 
   def execute_save
-    puts "Save not yet implemented."
+    puts "Game saved!"
+    yaml_string = YAML.dump(state)
+    File.open("save.yaml", "w") do |f|
+      f.write(yaml_string)
+    end
   end
 
   def execute_load
-    puts "Load not yet implemented."
+    puts "Save loaded!"
+    yaml_string = ""
+    File.open("save.yaml", "r") do |f|
+      yaml_string << f.read
+    end
+    self.state = YAML.load(yaml_string)
   end
 
   def execute_guess
@@ -145,9 +156,9 @@ class Game
 
   private
 
-  attr_reader :dict_filename, :state, :min_length, :max_length,
+  attr_reader :dict_filename, :min_length, :max_length,
               :line_width, :commands
-  attr_accessor :words, :target_word
+  attr_accessor :words, :state
 end
 
 # This class handles game state information
